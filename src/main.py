@@ -237,7 +237,7 @@ def main():
 
     line = "=" * 60
     print(line)
-    print("       ALU REGEX DATA EXTRACTION  -  SUMMARY")
+    print("      REGEX DATA EXTRACTION  -  SUMMARY")
     print(line)
     print("Emails:", len(emails), " URLs:", len(urls),
           " Phones:", len(phones), " Cards:", len(cards))

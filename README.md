@@ -1,4 +1,4 @@
-# ALU Regex Data Extraction
+# Regex Data Extraction
 
 A small Python program that reads a text file, finds different kinds of data
 using regex, and saves the results as JSON.
