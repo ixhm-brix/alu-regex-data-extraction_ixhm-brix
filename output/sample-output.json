@@ -1,221 +1,33 @@
 {
+  "_note": "This file is a placeholder. Run 'python src/main.py' to populate it with real extracted data from input/raw-text.txt.",
   "summary": {
-    "emails": 8,
-    "urls": 7,
-    "phones": 4,
-    "credit_cards": 10,
-    "times": 14,
-    "html_tags": 12,
-    "hashtags": 11,
-    "currency": 13
+    "emails": 0,
+    "urls": 0,
+    "phones": 0,
+    "credit_cards": 0,
+    "times": 0,
+    "html_tags": 0,
+    "hashtags": 0,
+    "currency": 0
   },
   "alu_email_counts": {
-    "alu_official": 4,
-    "alu_alumni": 2,
-    "alu_si": 1,
-    "general": 1
+    "alu_official": 0,
+    "alu_alumni": 0,
+    "alu_si": 0,
+    "general": 0
   },
   "card_check": {
-    "passed_luhn": 7,
-    "failed_luhn": 3
+    "passed_luhn": 0,
+    "failed_luhn": 0
   },
   "results": {
-    "emails": [
-      {
-        "masked": "j*************a@alueducation.com",
-        "category": "alu_official"
-      },
-      {
-        "masked": "j***************t@alueducation.com",
-        "category": "alu_official"
-      },
-      {
-        "masked": "o******k@alueducation.com",
-        "category": "alu_official"
-      },
-      {
-        "masked": "a*******t@alumni.alueducation.com",
-        "category": "alu_alumni"
-      },
-      {
-        "masked": "r************e@si.alueducation.com",
-        "category": "alu_si"
-      },
-      {
-        "masked": "a*********e@alumni.alueducation.com",
-        "category": "alu_alumni"
-      },
-      {
-        "masked": "a***********3@gmail.com",
-        "category": "general"
-      },
-      {
-        "masked": "n*****y@alueducation.com",
-        "category": "alu_official"
-      }
-    ],
-    "urls": [
-      "https://portal.alueducation.com/students/dashboard",
-      "http://portal.alueducation.com:8080/healthz",
-      "https://calendar.alueducation.com/feed?cohort=2026&format=ics&tz=Africa/Kigali",
-      "https://attacker.example/steal?c=",
-      "https://aline.dev/portfolio/2026?ref=alu&utm=newsletter",
-      "https://github.com/aline-u/alu-projects",
-      "https://analytics.alueducation.com/dashboards/newsletter?range=30d"
-    ],
-    "phones": [
-      {
-        "raw": "+250 788 123 456",
-        "masked": "********3456"
-      },
-      {
-        "raw": "(+250) 788-987-654",
-        "masked": "********7654"
-      },
-      {
-        "raw": "0788 555 014",
-        "masked": "******5014"
-      },
-      {
-        "raw": "+250-789-456-321",
-        "masked": "********6321"
-      }
-    ],
-    "credit_cards": [
-      {
-        "masked": "411111******1111",
-        "luhn_valid": true
-      },
-      {
-        "masked": "550000******0004",
-        "luhn_valid": true
-      },
-      {
-        "masked": "378282*****0005",
-        "luhn_valid": true
-      },
-      {
-        "masked": "601100******9424",
-        "luhn_valid": true
-      },
-      {
-        "masked": "453914******6467",
-        "luhn_valid": true
-      },
-      {
-        "masked": "411111******1112",
-        "luhn_valid": false
-      },
-      {
-        "masked": "123456******3456",
-        "luhn_valid": false
-      },
-      {
-        "masked": "000000******0000",
-        "luhn_valid": true
-      },
-      {
-        "masked": "999999******9999",
-        "luhn_valid": false
-      },
-      {
-        "masked": "426398******9299",
-        "luhn_valid": true
-      }
-    ],
-    "times": [
-      "00:00",
-      "02:00",
-      "04:30",
-      "07:05 AM",
-      "09:14",
-      "10:02",
-      "11:30 PM",
-      "11:47",
-      "12:00",
-      "14:00",
-      "18:30",
-      "23:45",
-      "3:42 pm",
-      "6:00 AM"
-    ],
-    "html_tags": [
-      {
-        "tag": "div",
-        "dangerous": false
-      },
-      {
-        "tag": "h3",
-        "dangerous": false
-      },
-      {
-        "tag": "h3",
-        "dangerous": false
-      },
-      {
-        "tag": "p",
-        "dangerous": false
-      },
-      {
-        "tag": "a",
-        "dangerous": false
-      },
-      {
-        "tag": "a",
-        "dangerous": false
-      },
-      {
-        "tag": "p",
-        "dangerous": false
-      },
-      {
-        "tag": "img",
-        "dangerous": false
-      },
-      {
-        "tag": "div",
-        "dangerous": false
-      },
-      {
-        "tag": "script",
-        "dangerous": true
-      },
-      {
-        "tag": "script",
-        "dangerous": true
-      },
-      {
-        "tag": "scriptscript",
-        "dangerous": false
-      }
-    ],
-    "hashtags": [
-      "#404NotFound",
-      "#88213",
-      "#88214",
-      "#88215",
-      "#ALUClassOf2026",
-      "#ALUImpact",
-      "#AfricanLeadership",
-      "#Cohort_2026",
-      "#R-22841",
-      "#StudentSupport",
-      "#leadership-african-youth"
-    ],
-    "currency": [
-      "$1,250.00",
-      "€340.50",
-      "£75",
-      "RWF 1,250,000",
-      "USD 9.99",
-      "12,500.00 KES",
-      "$25.00",
-      "€12.00",
-      "$4,800",
-      "¥1500",
-      "£0.99",
-      "RWF 500",
-      "USD 1,000,000.00"
-    ]
+    "emails": [],
+    "urls": [],
+    "phones": [],
+    "credit_cards": [],
+    "times": [],
+    "html_tags": [],
+    "hashtags": [],
+    "currency": []
   }
 }
