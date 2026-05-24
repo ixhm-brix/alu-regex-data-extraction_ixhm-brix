@@ -1,22 +1,38 @@
-
 import re
 import json
 import os
 import sys
 
+# Make €, £, ¥ print correctly on Windows.
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
     pass
 
 
+# Regex patterns
+
 email_pattern = r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}"
+
+# http / https only - we ignore javascript:, data:, file:, etc.
 url_pattern = r"https?://[A-Za-z0-9./?=&%_:-]+"
+
+# +250 788 123 456 , (+250) 788-987-654 , 0788 555 014
+# The (?<!\d)(?<!-)0 keeps it from grabbing the tail of a card number.
 phone_pattern = r"(?:\+\d{1,3}[\s-]?|\(\+?\d{1,3}\)[\s-]?|(?<!\d)(?<!-)0)\d{2,4}[\s-]\d{3,4}[\s-]\d{3,4}"
+
+# 13-19 digits with optional spaces/dashes. Just a net - real check is Luhn.
 card_pattern = r"\b(?:\d[ -]?){12,18}\d\b"
+
+# 24h ("14:00") or 12h ("3:42 pm")
 time_pattern = r"\b(?:[01]?\d|2[0-3]):[0-5]\d(?:\s?[APap]\.?[Mm]\.?)?\b"
+
+# The lookahead (?=[\s/>]) stops it matching <user@example.com>.
 html_pattern = r"<\/?[A-Za-z][A-Za-z0-9]*(?=[\s/>])[^<>@]*>"
+
 hashtag_pattern = r"#[A-Za-z0-9][A-Za-z0-9_-]{1,63}"
+
+# + (not *) is important - with *, "1500" would match as "150".
 number_part = r"\d{1,3}(?:,\d{3})+(?:\.\d{1,2})?|\d+(?:\.\d{1,2})?"
 currency_pattern = (
     r"(?:[$€£¥]\s?(?:" + number_part + r")"
@@ -24,8 +40,11 @@ currency_pattern = (
     r"|(?:" + number_part + r")\s?(?:USD|EUR|GBP|JPY|RWF|KES))"
 )
 
-max_file_size = 2 * 1024 * 1024   # 2 MB
+# Refuse files bigger than 2 MB.
+max_file_size = 2 * 1024 * 1024
 
+
+# ALU email rules
 
 def classify_email(email):
     email = email.lower()
@@ -38,11 +57,11 @@ def classify_email(email):
     return "general"
 
 
+# Luhn check (real cards must pass this)
 
 def luhn_check(card_number):
     digits = [int(d) for d in card_number if d.isdigit()]
     total = 0
-    # Walk the digits from right to left, doubling every 2nd one.
     for i, d in enumerate(reversed(digits)):
         if i % 2 == 1:
             d = d * 2
@@ -51,6 +70,8 @@ def luhn_check(card_number):
         total = total + d
     return total % 10 == 0
 
+
+# Masking
 
 def mask_email(email):
     name, domain = email.split("@", 1)
@@ -62,6 +83,7 @@ def mask_email(email):
 
 
 def mask_card(card_number):
+    # Keep first 6 + last 4 (PCI-DSS style).
     digits = re.sub(r"\D", "", card_number)
     if len(digits) < 10:
         return "*" * len(digits)
@@ -74,27 +96,27 @@ def mask_phone(phone):
         return "*" * len(digits)
     return "*" * (len(digits) - 4) + digits[-4:]
 
+
+# Extractors
+
 def find_emails(text):
-    found = re.findall(email_pattern, text)
     results = []
     seen = []
-    for email in found:
+    for email in re.findall(email_pattern, text):
         email = email.lower()
-        # skip duplicates
         if email in seen:
             continue
         seen.append(email)
         results.append({
             "masked": mask_email(email),
-            "category": classify_email(email)
+            "category": classify_email(email),
         })
     return results
 
 
 def find_urls(text):
-    found = re.findall(url_pattern, text)
     results = []
-    for url in found:
+    for url in re.findall(url_pattern, text):
         url = url.rstrip(".,);'\"")
         if url not in results:
             results.append(url)
@@ -102,13 +124,14 @@ def find_urls(text):
 
 
 def find_phones(text):
-    found = re.findall(phone_pattern, text)
     results = []
     seen = []
-    for phone in found:
+    for phone in re.findall(phone_pattern, text):
         digits = re.sub(r"\D", "", phone)
+        # Real phone numbers have 8-15 digits (E.164).
         if len(digits) < 8 or len(digits) > 15:
             continue
+        # Skip "0000-0000-0000" (a test card, not a phone).
         if len(set(digits)) == 1:
             continue
         if digits in seen:
@@ -119,70 +142,65 @@ def find_phones(text):
 
 
 def find_cards(text):
-    found = re.findall(card_pattern, text)
     results = []
     seen = []
-    for card in found:
+    for card in re.findall(card_pattern, text):
         digits = re.sub(r"\D", "", card)
         if len(digits) < 13 or len(digits) > 19:
             continue
         if digits in seen:
             continue
         seen.append(digits)
+        # Cards that fail Luhn are kept but flagged, not silently dropped.
         results.append({
             "masked": mask_card(digits),
-            "luhn_valid": luhn_check(digits)
+            "luhn_valid": luhn_check(digits),
         })
     return results
 
 
 def find_times(text):
-    found = re.findall(time_pattern, text)
-    return sorted(set(found))
+    return sorted(set(re.findall(time_pattern, text)))
 
 
 def find_html_tags(text):
-    found = re.findall(html_pattern, text)
     dangerous = ["script", "iframe", "object", "embed", "style"]
     results = []
-    for tag in found:
+    for tag in re.findall(html_pattern, text):
         name_match = re.match(r"</?([A-Za-z][A-Za-z0-9]*)", tag)
         name = name_match.group(1).lower() if name_match else ""
-        results.append({
-            "tag": name,
-            "dangerous": name in dangerous
-        })
+        results.append({"tag": name, "dangerous": name in dangerous})
     return results
 
 
 def find_hashtags(text):
-    found = re.findall(hashtag_pattern, text)
-    return sorted(set(found))
+    return sorted(set(re.findall(hashtag_pattern, text)))
 
 
 def find_currency(text):
-    found = re.findall(currency_pattern, text)
-    return [m.strip() for m in found]
+    return [m.strip() for m in re.findall(currency_pattern, text)]
 
+
+# Read input safely
 
 def read_input_file(path):
     if not os.path.isfile(path):
         print("Input file not found:", path)
         return ""
-    size = os.path.getsize(path)
-    if size > max_file_size:
-        print("File too big, refusing to read it:", size, "bytes")
+    if os.path.getsize(path) > max_file_size:
+        print("File too big, refusing to read it")
         return ""
     with open(path, "r", encoding="utf-8", errors="replace") as f:
         return f.read()
 
+
+# Main
 
 def main():
     here = os.path.dirname(os.path.abspath(__file__))
     project = os.path.dirname(here)
     input_path = os.path.join(project, "input", "raw-text.txt")
     output_path = os.path.join(project, "output", "sample-output.json")
-
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
     text = read_input_file(input_path)
@@ -216,10 +234,7 @@ def main():
             "currency": len(currency),
         },
         "alu_email_counts": alu_counts,
-        "card_check": {
-            "passed_luhn": valid_cards,
-            "failed_luhn": invalid_cards,
-        },
+        "card_check": {"passed_luhn": valid_cards, "failed_luhn": invalid_cards},
         "results": {
             "emails": emails,
             "urls": urls,
@@ -280,8 +295,7 @@ def main():
     print("                                  none of these matched any data pattern")
     print()
     print(line)
-    print("Full structured report saved to:")
-    print(" ", output_path)
+    print("Full report saved to:", output_path)
     print(line)
 
 
